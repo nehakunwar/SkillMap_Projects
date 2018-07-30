@@ -1,0 +1,91 @@
+package com.niit.TestCase;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.util.List;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.niit.TestCase.dao.Employee;
+import com.niit.TestCase.dao.EmployeeDAO;
+import com.niit.TestCase.dao.EmployeeDAOImpl;
+
+public class EmployeeTest {
+	private  EmployeeDAO empdao;
+	private  Employee employee=new Employee();
+	@Before
+	public void setUp()
+	{
+		empdao=new EmployeeDAOImpl();
+	}
+	@After
+	public void tearDawn()
+	{
+		empdao=null;
+	}
+	
+
+@Test
+	public void testCreateUser() {
+        //EmployeeDAO empdao=new EmployeeDAOImpl();
+		//Employee employee=new Employee();
+		employee.setEmpId("E11");
+		employee.setCity("udaipur");
+		employee.setContactNumber("346634");
+		employee.setEmpEmail("punam@niit.com");
+		employee.setEmpName("punam");
+		employee.setEmpQualification("Mtech");
+		employee.setPassword("password2");
+		employee.setRole("Manager");
+		empdao.insertEmployee(employee);
+		assertNotNull("Creating of user failed.",empdao.getEmployeeById("E11"));
+		
+		
+		
+	}
+
+
+	@Test
+	public void testUpdateEmployee() {
+		//EmployeeDAO empdao=new EmployeeDAOImpl();
+		//Employee employee=new Employee();
+		empdao.getEmployeeById("E11");
+		employee.setCity("surat");
+		empdao.updateEmployee(employee);
+		assertEquals("p",empdao.getEmployeeById("E11").getPassword());
+	
+	}
+	
+	@Test
+	public void testGetListOfEmployee() {
+		//EmployeeDAO empdao=new EmployeeDAOImpl();
+		
+		List<Employee> emplist=empdao.listAllEmployees();
+		assertNotNull("Retrieval of users failed.", emplist);
+		
+	}
+   
+	@Test
+	public void testDelete()
+	{
+		Employee empId=empdao.getEmployeeById("E11");
+		String id=empId.getEmpId();
+		empdao.deleteEmployee(id);
+		assertNotNull("Retrieval of user failed.", employee);
+		assertEquals(true, empdao.deleteEmployee(id));
+	}
+	@Test
+	public void testGetUser() {
+		//Employee employee=new Employee();
+		EmployeeDAO empdao=new EmployeeDAOImpl();
+		employee=empdao.getEmployeeById("E11");
+	
+		assertNotNull("Retrieval of user failed.", employee);
+	}
+
+	
+
+}

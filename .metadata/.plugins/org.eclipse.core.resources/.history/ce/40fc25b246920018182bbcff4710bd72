@@ -1,0 +1,18 @@
+package com.niit.SpringExample;
+
+public class Car {
+	int carId;
+	String carName;
+	public Car(int carId, String carName) {
+		super();
+		this.carId = carId;
+		this.carName = carName;
+	}
+	public void display()
+	{
+		System.out.println("Car id is"+carId);
+		System.out.println("Car NAme"+carName);
+	}
+	
+
+}

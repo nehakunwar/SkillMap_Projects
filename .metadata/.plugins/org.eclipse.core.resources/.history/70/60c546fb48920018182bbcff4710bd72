@@ -1,0 +1,20 @@
+package com.niit.SpringExample;
+
+public class Engine {
+	String eName;
+	public String geteName() {
+		return eName;
+	}
+	public void seteName(String eName) {
+		this.eName = eName;
+	}
+	Engine()
+	{
+		
+	}
+	public String getEngineName()
+	{
+		return eName;
+	}
+
+}

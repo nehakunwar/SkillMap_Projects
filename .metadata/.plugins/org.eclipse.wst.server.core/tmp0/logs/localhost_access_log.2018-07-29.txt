@@ -1,0 +1,4 @@
+127.0.0.1 - - [29/Jul/2018:21:45:59 +0530] "GET / HTTP/1.1" 404 1070
+0:0:0:0:0:0:0:1 - - [29/Jul/2018:21:46:01 +0530] "GET /WebNaukariServletJspApp/ HTTP/1.1" 200 1365
+0:0:0:0:0:0:0:1 - - [29/Jul/2018:21:46:34 +0530] "POST /WebNaukariServletJspApp/login HTTP/1.1" 200 373
+0:0:0:0:0:0:0:1 - - [29/Jul/2018:21:46:51 +0530] "GET /WebNaukariServletJspApp/updateUser?id=E02 HTTP/1.1" 200 1463

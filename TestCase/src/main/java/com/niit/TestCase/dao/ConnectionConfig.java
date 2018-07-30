@@ -1,0 +1,22 @@
+package com.niit.TestCase.dao;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class ConnectionConfig {
+	public static final String URL = "jdbc:h2:tcp://localhost/~/mydb";
+    public static final String USER = "sa";
+    public static final String PASS = "sa";
+   
+    public static Connection getConnection() throws ClassNotFoundException
+    {
+      try {
+    	  Class.forName("org.h2.Driver"); 
+          return DriverManager.getConnection(URL, USER, PASS);
+      } catch (SQLException ex) {
+          throw new RuntimeException("Error connecting to the database", ex);
+      }
+    }
+
+}

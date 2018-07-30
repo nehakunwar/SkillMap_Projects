@@ -1,0 +1,7 @@
+package com.niit.SpringExample;
+
+public class Car {
+	int carId;
+	String carName;
+
+}

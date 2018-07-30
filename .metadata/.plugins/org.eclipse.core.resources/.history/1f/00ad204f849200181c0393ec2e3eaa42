@@ -1,0 +1,289 @@
+package com.niit.naukari.controller;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import com.niit.naukari.Dao.EmployeeDAO;
+import com.niit.naukari.DaoImpl.EmployeeDAOImpl;
+import com.niit.naukari.model.Employee;
+
+/**
+ * Servlet implementation class Controller
+ */
+@WebServlet(name="Controller",urlPatterns= {"/"})
+public class Controller extends HttpServlet {
+	
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String path=request.getServletPath();
+		System.out.println(path);
+		
+		switch(path)
+		{
+			case "/registerPage": 
+
+		                       RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/WEB-INF/views/adduser.jsp");
+                               dispatcher.forward(request, response);
+
+			                   	break;
+			case "/userUpdateProfile": userProfile(request, response);
+			                    break;
+			case "/insertUser": insertProcess(request, response);
+					              break;
+			 case "/login":       checkLogin(request, response);
+			                    break;
+			 case "/getAllDetails" :getAllDetails(request, response);
+			                      break;
+			 case"/getAllTechMentor":getAllDetailsManager(request, response);
+				 //approvedList(request, response);
+			                     break;
+			 case "/pendingREquest":Approve(request, response);
+			                     break;
+			 case "/updateUser":update(request, response);
+			                       break;
+			 case "/deleteRequest": deleteProcess(request, response);
+			                   break;
+			 case "/logout":    RequestDispatcher dispatch = getServletContext().getRequestDispatcher("/WEB-INF/views/Home.jsp");
+	                            dispatch.forward(request, response); 
+	                            break;
+			 case "/updateMangerProfile":updateManagerProfile(request, response);
+			                        break;
+		   default:
+			   RequestDispatcher dispatcher1 = getServletContext().getRequestDispatcher("/WEB-INF/views/Home.jsp");
+	           dispatcher1.include(request, response);
+		  
+			        
+		}
+		
+		//RequestDispatcher rd=request.getRequestDispatcher();
+		
+		
+	}
+
+	protected void deleteProcess(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("in delete page"); 
+		String id=request.getParameter("id");
+		 EmployeeDAO empdao=new EmployeeDAOImpl();
+		//Employee employee= empdao.getEmployeeById(id);
+		 
+		boolean flag=empdao.deleteEmployee(id);
+		request.setAttribute("id", id);
+		if(flag=true)
+		{
+			getAllDetails(request, response);
+			/*RequestDispatcher dispatcher1 = getServletContext().getRequestDispatcher("/WEB-INF/views/deleterequest.jsp");
+	           dispatcher1.forward(request, response);*/
+		}
+		
+		
+	}
+	
+	protected void insertProcess(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("in insert process");
+		String eid=request.getParameter("empid");
+		String ename=request.getParameter("empname");
+		String city=request.getParameter("city");
+		String number=request.getParameter("number");
+		String empqualification=request.getParameter("empqualification");
+		String email=request.getParameter("email");
+		String password=request.getParameter("password");
+		String role=request.getParameter("role");
+		Employee e=new Employee();
+		System.out.println("in insert process 2");
+		e.setEmpId(eid);
+		e.setEmpName(ename);
+		e.setCity(city);
+		e.setContactNumber(number);
+		e.setEmpEmail(email);
+		e.setPassword(password);
+		e.setRole(role);
+		e.setStatus(0);
+		e.setEmpQualification(empqualification);
+		EmployeeDAO empdao=new EmployeeDAOImpl();
+		empdao.insertEmployee(e);
+		System.out.println("in insert process3");
+		
+		RequestDispatcher dispatcher1 = getServletContext().getRequestDispatcher("/WEB-INF/views/Home.jsp");
+        dispatcher1.forward(request, response);
+		
+		
+	}
+ 
+	protected void checkLogin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("In check method");        
+		 HttpSession  session = request.getSession();
+		        EmployeeDAO empdao=new EmployeeDAOImpl();
+		        String email=request.getParameter("uname");
+		         String password=request.getParameter("pass");
+		         
+		        Employee employee= empdao.getUserByUserNameAndPassword(email,password);
+		        session.setAttribute("employeeSession",employee );
+		      
+		        String eid=employee.getEmpId();
+		         System.out.println("id is"+employee.getEmpId());
+		         if(employee.getRole().equals("HRROLE")) {
+		        	 request.setAttribute("hr","HRROLE");
+		         RequestDispatcher dispatcher1 = getServletContext().getRequestDispatcher("/WEB-INF/views/HRProfile.jsp");
+		           dispatcher1.forward(request, response);
+		           
+		         }
+		         else if(employee.getRole().equals("Manager")) {
+		        	 request.setAttribute("Mgr","Manager");
+		        	 if(employee.getStatus()==1) {
+		        	 RequestDispatcher dispatcher1 = getServletContext().getRequestDispatcher("/WEB-INF/views/ManagerProfile.jsp");
+			           dispatcher1.forward(request, response);
+		        	 }
+		        	 else
+		        	 {
+		        		 RequestDispatcher dispatcher1 = getServletContext().getRequestDispatcher("/WEB-INF/views/approval.jsp");
+				           dispatcher1.forward(request, response);
+		        	 }
+		        	 
+		         }
+		         else
+		         {
+		        	 request.setAttribute("username",email );
+		        	 request.setAttribute("employee",employee);
+		        	 if(employee.getStatus()==1) {
+		        	 RequestDispatcher dispatcher1 = getServletContext().getRequestDispatcher("/WEB-INF/views/UserProfile.jsp");
+			           dispatcher1.forward(request, response);
+		        	 }
+		        	 else
+		        	 {
+		        		 RequestDispatcher dispatcher1 = getServletContext().getRequestDispatcher("/WEB-INF/views/approval.jsp");
+				           dispatcher1.forward(request, response);
+		        	 }
+		         }
+		
+	}
+	protected void getAllDetailsManager(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		System.out.println("In get all details");        
+		List<Employee> employee=new ArrayList<Employee>();
+		EmployeeDAO empdao=new EmployeeDAOImpl();
+		employee=empdao.listAllEmployees();
+		for(Employee e:employee)
+		{
+			System.out.println(e);
+		}
+		
+		request.setAttribute("Employee", employee);
+		request.setAttribute("role", request.getParameter("role"));
+		
+		//RequestDispatcher d = getServletContext().getRequestDispatcher("/WEB-INF/views/getAllDetails.jsp");
+		RequestDispatcher d = getServletContext().getRequestDispatcher("/WEB-INF/views/getAllRecordManager.jsp");
+	    d.forward(request, response);
+		
+		
+	}
+protected void getAllDetails(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	System.out.println("In get all details");        
+	List<Employee> employee=new ArrayList<Employee>();
+	EmployeeDAO empdao=new EmployeeDAOImpl();
+	employee=empdao.listAllEmployees();
+	for(Employee e:employee)
+	{
+		System.out.println(e);
+	}
+	request.setAttribute("Employee", employee);
+	request.setAttribute("role", request.getParameter("role"));
+	
+	RequestDispatcher d = getServletContext().getRequestDispatcher("/WEB-INF/views/getAllDetails.jsp");
+    d.forward(request, response);
+	
+	
+}
+
+protected void Approve(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	System.out.println("in approve page"); 
+	String id=request.getParameter("id");
+	 EmployeeDAO empdao=new EmployeeDAOImpl();
+	Employee employee= empdao.getEmployeeById(id);
+	 empdao.approveEmployee(id);
+	 request.setAttribute("employee", employee);
+	 getAllDetails(request, response);
+	 RequestDispatcher d = getServletContext().getRequestDispatcher("/WEB-INF/views/HRApproval.jsp");
+	    d.forward(request, response);
+	
+	
+}
+protected void approvedList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	
+	System.out.println("In manager get all details");        
+	List<Employee> employee=new ArrayList<Employee>();
+	EmployeeDAO empdao=new EmployeeDAOImpl();
+	employee=empdao.listAllEmployees();
+	for(Employee e:employee)
+	{
+		System.out.println(e);
+	}
+	request.setAttribute("Employee", employee);
+	RequestDispatcher d = getServletContext().getRequestDispatcher("/WEB-INF/views/getAllDetails.jsp");
+    d.include(request, response);
+}
+protected void userProfile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	String id=request.getParameter("id");
+	System.out.println("id is"+id);
+	System.out.println(id);
+
+	EmployeeDAO empdao=new EmployeeDAOImpl();
+	Employee employee=empdao.getEmployeeById(id);
+	
+	request.setAttribute("employee", employee);
+	
+     RequestDispatcher d = getServletContext().getRequestDispatcher("/WEB-INF/views/updateUserProfile.jsp");
+     d.include(request, response);
+	
+}
+protected void update(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	System.out.println("in update process");
+	
+	String ename=request.getParameter("empname");
+	String city=request.getParameter("city");
+	String number=request.getParameter("number");
+	String empqualification=request.getParameter("empqualification");
+	String email=request.getParameter("email");
+	String password=request.getParameter("password");
+	
+	Employee e=new Employee();
+	System.out.println("in insert process 2");
+	
+	e.setEmpName(ename);
+	e.setCity(city);
+	e.setContactNumber(number);
+	e.setEmpEmail(email);
+	e.setPassword(password);
+	
+	
+	e.setEmpQualification(empqualification);
+	EmployeeDAO empdao=new EmployeeDAOImpl();
+	empdao.updateEmployee(e);
+	RequestDispatcher d = getServletContext().getRequestDispatcher("/WEB-INF/views/UserProfile.jsp");
+    d.forward(request, response);
+}
+protected void updateManagerProfile(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	String id=request.getParameter("id");
+	System.out.println("id is"+id);
+	System.out.println(id);
+
+	EmployeeDAO empdao=new EmployeeDAOImpl();
+	Employee employee=empdao.getEmployeeById(id);
+	
+	request.setAttribute("employee", employee);
+	
+     RequestDispatcher d = getServletContext().getRequestDispatcher("/WEB-INF/views/updateManagerProfile.jsp");
+     d.include(request, response);
+}
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		doGet(request,response);
+}
+}

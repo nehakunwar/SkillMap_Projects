@@ -1,0 +1,52 @@
+package com.niit.TestCase;
+
+import org.junit.Test;
+
+import com.niit.TestCase.dao.EmployeeDAO;
+
+public class EmployeeTest {
+
+EmployeeTest()
+{
+	EmployeeDAO empdao;
+}
+
+
+	
+	@Test
+	public void testCreateUser() {
+
+		/*user.setName("Chris");
+		user.setPassword("password");
+		user.setUsername("chris");
+		userDAO.save(user);
+		assertNotNull("Creating of user failed.", userDAO.get("chris"));
+		userDAO.delete(user);*/
+	}
+
+	@Test
+	public void testUpdateUser() {
+
+		/*user=userDAO.get("john");
+		user.setPassword("password2");
+		userDAO.update(user);
+		assertEquals("password2", userDAO.get("john").getPassword());*/
+	}
+	
+	@Test
+	public void testGetListOfUsers() {
+
+		/*List<User> users = userDAO.list();
+		assertNotNull("Retrieval of users failed.", users);*/
+	}
+
+	@Test
+	public void testGetUser() {
+
+		/*user = userDAO.get("john");
+		assertNotNull("Retrieval of user failed.", user);*/
+	}
+
+	
+
+}

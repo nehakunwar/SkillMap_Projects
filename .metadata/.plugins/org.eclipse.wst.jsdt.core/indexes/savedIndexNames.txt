@@ -1,0 +1,7 @@
+INDEX VERSION 1.4+D:\skillmap\.metadata\.plugins\org.eclipse.wst.jsdt.core\indexes
+3049074578.index
+1100320295.index
+3407679310.index
+3379016212.index
+402528391.index
+838474375.index

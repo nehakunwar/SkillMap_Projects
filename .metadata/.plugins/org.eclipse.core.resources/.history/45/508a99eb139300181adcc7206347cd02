@@ -1,0 +1,65 @@
+package com.niit.backend.daoimpl;
+
+import java.util.List;
+
+import javax.transaction.Transactional;
+
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import com.niit.backend.dao.EmployeeDAO;
+import com.niit.backend.model.Employee;
+@Repository("employeeDAO")
+@Transactional
+public class EmployeeDAOImpl implements EmployeeDAO{
+	@Autowired
+	private SessionFactory sessionFactory;
+
+	public boolean insertEmployee(Employee employee) {
+		sessionFactory.getCurrentSession().save(employee);
+		return true;
+	}
+
+	public List<Employee> getAllEmployees() {
+	
+		return sessionFactory.getCurrentSession().createQuery("from Employee").list();
+	}
+
+	public boolean updateEmployee(Employee employee) {
+		sessionFactory.getCurrentSession().update(employee);
+		return true;
+	}
+
+	public Employee getEmployeeById(int eId) {
+		Employee employee=(Employee)sessionFactory.getCurrentSession().createQuery("from Employee where empId="+eId).uniqueResult();
+		return employee;
+	}
+
+	public boolean deleteEmployee(int eId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean approveEmployee(int eId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public List<Employee> listApprovedEmployees() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<Employee> listNotApprovedEmployees() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<Employee> searchEmployeesByName(String name) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+
+}

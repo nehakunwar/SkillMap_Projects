@@ -1,0 +1,289 @@
+package com.niit.naukari.DaoImpl;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.plaf.synth.SynthScrollBarUI;
+
+import com.niit.naukari.Dao.EmployeeDAO;
+import com.niit.naukari.config.ConnectionConfig;
+import com.niit.naukari.model.Employee;
+
+public class EmployeeDAOImpl implements EmployeeDAO {
+
+	@Override
+	public boolean insertEmployee(Employee employee) {
+		System.out.println("calling insert dao impl");
+		 try {
+			Connection connection = ConnectionConfig.getConnection();
+			 
+			        PreparedStatement ps = connection.prepareStatement("INSERT INTO employee VALUES (?,?,?,?,?,?,?,?,?)");
+			        ps.setString(1, employee.getEmpId());
+			        ps.setString(2, employee.getEmpName());
+			        ps.setString(3, employee.getCity());
+			        ps.setString(4, employee.getContactNumber());
+			        ps.setString(5, employee.getEmpEmail());
+			        ps.setString(6, employee.getEmpQualification());
+			        ps.setString(7, employee.getPassword());
+			        ps.setInt(8, employee.getStatus());
+			        ps.setString(9,employee.getRole());
+			        int i = ps.executeUpdate();
+			      if(i == 1) {
+			    	  System.out.println("Record Inserted Successfully.....");
+			        return true;
+			      }
+			    } catch (SQLException ex) {
+			        ex.printStackTrace();
+			    }
+		catch (ClassNotFoundException e) {
+			
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	@Override
+	public boolean updateEmployee(Employee employee) {
+		 try {
+			 System.out.println("in updateImple emplyee name :"+employee.getEmpName());
+			Connection connection = ConnectionConfig.getConnection();
+			PreparedStatement ps = connection.prepareStatement("update employee SET empname=?,city=?,empemail=?,contactnumber=?,empqualification=?,password=? WHERE empid=?");
+	        ps.setString(1,employee.getEmpName());
+	        ps.setString(2, employee.getCity());
+	        ps.setString(3,employee.getEmpEmail());
+	        ps.setString(4, employee.getContactNumber());
+	        ps.setString(5, employee.getEmpQualification());
+	        ps.setString(6, employee.getPassword());
+	        ps.setString(7, employee.getEmpId());
+	        System.out.println();
+	        int i = ps.executeUpdate();
+	        System.out.println("in updateImpl"+i);
+	        if(i == 1) {
+	       	System.out.println("Record Updateed succesfully for Employee ID : "+employee.getEmpId());
+	            return true;
+	        }
+	        	else
+	        		return false;
+		} catch (ClassNotFoundException | SQLException e) {
+			
+			e.printStackTrace();
+			return false;
+		}
+		
+	}
+
+	@Override
+	public Employee getEmployeeById(String id) {
+		Employee e1=null; 
+		 try {
+			Connection connection = ConnectionConfig.getConnection();
+			//Statement stmt = connection.createStatement();
+			System.out.println("EMployee is is"+id);
+	        //ResultSet rs = stmt.executeQuery("SELECT * FROM employee WHERE empid="+id);
+			PreparedStatement ps = connection.prepareStatement("SELECT * FROM employee WHERE empid=?");
+	        ps.setString(1,id);
+	        ResultSet rs = ps.executeQuery();
+	        
+	        while (rs.next()) {
+	             e1 = new Employee(rs.getString("empid"), rs.getString("empname"), rs.getString("city"), rs.getString("contactnumber"),rs.getString("empemail"),rs.getString("empqualification"),rs.getString("password"),rs.getString("role"),rs.getInt("status"));
+	           System.out.println(e1.toString());
+	           
+	        }
+				
+			
+		} catch (ClassNotFoundException | SQLException e) {
+		
+			e.printStackTrace();
+		}
+		 return e1;
+	}
+
+	@Override
+	public boolean deleteEmployee(String id) {
+		 try {
+			Connection connection = ConnectionConfig.getConnection();
+			Statement stmt = connection.createStatement();
+			PreparedStatement ps = connection.prepareStatement("DELETE FROM employee WHERE empid=?");
+	       // int i = stmt.executeUpdate("DELETE FROM employee WHERE empid=" + id);
+			ps.setString(1,id);
+	        int i = ps.executeUpdate();
+	       
+	      if(i == 1) {
+	    	  System.out.println("Employee ID  "+id+" record deleted successfully from data base...");
+	      return true;
+	      
+		}} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		 
+		return false;
+	}
+
+	@Override
+	public List<Employee> listAllEmployees() {
+		List<Employee> emp=new ArrayList<Employee>();
+		 try {
+			Connection connection = ConnectionConfig.getConnection();
+			Statement stmt = connection.createStatement();
+	        ResultSet rs = stmt.executeQuery("SELECT * FROM employee");
+	       
+	      
+	        
+	        while (rs.next()) {
+	            Employee employee = new Employee(rs.getString("empid"), rs.getString("empname"), rs.getString("city"), rs.getString("contactnumber"),rs.getString("empemail"),rs.getString("empqualification"),rs.getString("password"),rs.getString("role"),rs.getInt("status"));
+	            if(employee.getRole().equals("HRROLE"))
+	            {
+	            
+	            }
+	            else
+	            {
+	            	emp.add(employee);
+	            }
+	        }
+	        
+
+		} catch (ClassNotFoundException | SQLException e) {
+		
+			e.printStackTrace();
+		}
+		 return emp;
+	}
+
+	@Override
+	public Employee getUserByUserNameAndPassword(String empemail, String password) {
+		Employee e1=null;
+		 try {
+			 System.out.println("in user password impl");
+				Connection connection = ConnectionConfig.getConnection();
+				PreparedStatement ps = connection.prepareStatement("SELECT * FROM employee WHERE empemail=? AND password=?");
+		        ps.setString(1,empemail);
+		        ps.setString(2, password);
+		        ResultSet rs = ps.executeQuery();
+		        int flag=0;
+		        while (rs.next()) {
+		             e1 = new Employee(rs.getString("empid"), rs.getString("empname"), rs.getString("city"), rs.getString("contactnumber"),rs.getString("empemail"),rs.getString("empqualification"),rs.getString("password"),rs.getString("role"),rs.getInt("status"));
+		            flag=1;
+		        }
+		        if(flag==0)
+		        {
+		        	System.out.println("Sorry...Email ID and Password Not correct");
+		        	return null;
+		        }
+		        else {
+		        	return e1;
+		        }
+		       
+				
+					
+		       
+		      
+		       
+
+			} catch (ClassNotFoundException | SQLException e) {
+			
+				e.printStackTrace();
+				//System.out.println("Sorry...Email ID and Password Not correct");
+				return null;
+			}
+	}
+
+	@Override
+	public boolean approveEmployee(String eId) {
+		 try {
+				Connection connection = ConnectionConfig.getConnection();
+				PreparedStatement ps = connection.prepareStatement("update Employee set status=true where empid=?");
+		        ps.setString(1,eId);
+		        /*ps.setString(2, employee.getCity());
+		        ps.setString(3,employee.getEmpEmail());
+		        ps.setString(4, employee.getEmpId());*/
+		        int i = ps.executeUpdate();
+		        if(i == 1) {
+		        	//System.out.println("Record Updateed succesfully for Employee ID : "+employee.getEmpId());
+		            return true;
+		        }
+			} catch (ClassNotFoundException | SQLException e) {
+				
+				e.printStackTrace();
+			}
+			return false;
+	}
+
+	@Override
+	public List<Employee> listApprovedEmployees() {
+		List<Employee> emp=new ArrayList<Employee>();
+		 try {
+			Connection connection = ConnectionConfig.getConnection();
+			Statement stmt = connection.createStatement();
+	        ResultSet rs = stmt.executeQuery("SELECT * FROM employee WHERE status=true");
+
+	        
+	        while (rs.next()) {
+	            Employee employee = new Employee(rs.getString("empid"), rs.getString("empname"), rs.getString("city"), rs.getString("contactnumber"),rs.getString("empemail"),rs.getString("empqualification"),rs.getString("password"),rs.getString("role"),rs.getInt("status"));
+	            emp.add(employee);
+	        }
+	        
+
+		} catch (ClassNotFoundException | SQLException e) {
+		
+			e.printStackTrace();
+		}
+		 return emp;
+	}
+
+	@Override
+	public List<Employee> listNotApprovedEmployees() {
+		List<Employee> emp=new ArrayList<Employee>();
+		 try {
+			Connection connection = ConnectionConfig.getConnection();
+			Statement stmt = connection.createStatement();
+	        ResultSet rs = stmt.executeQuery("SELECT * FROM employee WHERE status=false");
+
+	        
+	        while (rs.next()) {
+	            Employee employee = new Employee(rs.getString("empid"), rs.getString("empname"), rs.getString("city"), rs.getString("contactnumber"),rs.getString("empemail"),rs.getString("empqualification"),rs.getString("password"),rs.getString("role"),rs.getInt("status"));
+	            emp.add(employee);
+	        }
+	        
+
+		} catch (ClassNotFoundException | SQLException e) {
+		
+			e.printStackTrace();
+		}
+		 return emp;
+	}
+
+	@Override
+	public Employee searchEmployeeByName(String name) {
+		Employee e1=null; 
+		 try {
+			Connection connection = ConnectionConfig.getConnection();
+			//Statement stmt = connection.createStatement();
+			System.out.println("EMployee is is"+name);
+	        //ResultSet rs = stmt.executeQuery("SELECT * FROM employee WHERE empid="+id);
+			PreparedStatement ps = connection.prepareStatement("SELECT * FROM employee WHERE empid=?");
+	        ps.setString(1,id);
+	        ResultSet rs = ps.executeQuery();
+	        
+	        while (rs.next()) {
+	             e1 = new Employee(rs.getString("empid"), rs.getString("empname"), rs.getString("city"), rs.getString("contactnumber"),rs.getString("empemail"),rs.getString("empqualification"),rs.getString("password"),rs.getString("role"),rs.getInt("status"));
+	           System.out.println(e1.toString());
+	           
+	        }
+				
+			
+		} catch (ClassNotFoundException | SQLException e) {
+		
+			e.printStackTrace();
+		}
+		 return e1;
+	}
+
+	
+
+}

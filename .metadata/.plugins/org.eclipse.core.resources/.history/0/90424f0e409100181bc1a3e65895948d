@@ -1,0 +1,16 @@
+package com.niit.naukari.Dao;
+
+import java.util.List;
+
+import com.niit.naukari.model.Employee;
+
+public interface EmployeeDAO {
+	
+	public boolean insertEmployee(Employee employee);
+	public boolean updateEmployee(Employee employee);
+	public Employee getEmployeeById(String id);
+	public boolean deleteEmployee(int id);
+	public List<Employee> listAllEmployees();
+	public Employee getUserByUserNameAndPassword(String empname, String passord);
+	
+}
